@@ -25,10 +25,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 };
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // Simple check for admin auth (header for now, or just trust for prototype if no sessions)
-  // In a real app, we'd check a JWT or cookie
+  // Simple check for admin auth
+  const HARDCODED_PASSWORD = "Brem2026";
   const authHeader = context.request.headers.get('Authorization');
-  if (authHeader !== context.env.ADMIN_PASSWORD) {
+  if (authHeader !== HARDCODED_PASSWORD) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 

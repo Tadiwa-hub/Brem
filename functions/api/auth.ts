@@ -3,11 +3,12 @@ import { Env } from './availability';
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const { password } = await context.request.json() as { password: string };
+    const HARDCODED_PASSWORD = "Brem2026";
 
-    if (password === context.env.ADMIN_PASSWORD) {
+    if (password === HARDCODED_PASSWORD) {
       // In a real app, you'd issue a token here. 
       // For this prototype, we'll return success and the frontend will store the "token" (which is just the password)
-      return new Response(JSON.stringify({ success: true, token: password }), {
+      return new Response(JSON.stringify({ success: true, token: HARDCODED_PASSWORD }), {
         headers: { 'Content-Type': 'application/json' }
       });
     } else {
