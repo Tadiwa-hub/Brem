@@ -4,7 +4,7 @@ const StayOptions = () => {
       title: "DAY REST",
       price: "$25",
       subtitle: "per visit",
-      image: "/images/WhatsApp Image 2026-06-03 at 08.58.03 (1).jpeg",
+      image: "/images/WhatsApp Image 2026-06-03 at 08.58.04.jpeg",
       features: [
         "4 Hours of comfort",
         "Check in anytime",
@@ -18,7 +18,7 @@ const StayOptions = () => {
       title: "NIGHT STAY",
       price: "$50",
       subtitle: "per night",
-      image: "/images/WhatsApp Image 2026-06-03 at 08.58.03 (2).jpeg",
+      image: "/images/WhatsApp Image 2026-06-03 at 08.58.03.jpeg",
       features: [
         "Check in from 10:00 AM",
         "Check out 10:00 AM next day",
