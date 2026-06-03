@@ -40,3 +40,21 @@
 .animate-slide-up {
   animation: slideUp 1s ease-out forwards;
 }
+
+/* Custom Scrollbar for Calendar */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #C9A96E;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #0F2A4A;
+}

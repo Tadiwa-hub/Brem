@@ -42,14 +42,20 @@ const StayOptions = () => {
           {options.map((option, index) => (
             <div 
               key={index} 
-              className={`bg-white rounded-lg shadow-xl border-t-4 transition-transform hover:-translate-y-2 overflow-hidden relative ${option.highlight ? 'border-accent scale-105 z-10' : 'border-primary'}`}
+              className={`bg-white rounded-2xl shadow-xl border-t-4 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 overflow-hidden relative group ${option.highlight ? 'border-accent scale-100 lg:scale-105 z-10' : 'border-primary'}`}
             >
-              <div className="h-48 overflow-hidden">
-                <img src={option.image} alt={option.title} className="w-full h-full object-cover transition-transform hover:scale-110 duration-500" />
+              <div className="h-56 md:h-64 overflow-hidden relative">
+                <img 
+                  src={option.image} 
+                  alt={option.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors duration-500" />
               </div>
-              <div className="p-8">
+              <div className="p-6 md:p-8">
                 {option.highlight && (
-                  <div className="bg-accent text-white text-xs font-bold px-3 py-1 rounded-full absolute top-44 left-1/2 -translate-x-1/2 uppercase z-20">
+                  <div className="bg-accent text-white text-[10px] md:text-xs font-bold px-4 py-1.5 rounded-full absolute top-[210px] md:top-[240px] left-1/2 -translate-x-1/2 uppercase z-20 shadow-lg tracking-widest">
                     Most Popular
                   </div>
                 )}
