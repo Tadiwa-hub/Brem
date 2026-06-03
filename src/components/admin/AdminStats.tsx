@@ -68,10 +68,10 @@ const AdminStats = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-primary mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button className="p-4 bg-surface hover:bg-gray-100 rounded-lg text-left transition-all">
               <p className="font-bold text-primary">New Booking</p>
               <p className="text-xs text-gray-500">Manual entry</p>
@@ -81,20 +81,6 @@ const AdminStats = () => {
               <p className="text-xs text-gray-500">Holiday/Maintenance</p>
             </button>
           </div>
-        </div>
-        
-        <div className="bg-primary text-white p-8 rounded-lg shadow-sm">
-          <h3 className="text-lg font-bold text-accent mb-2">Monthly Target</h3>
-          <p className="text-3xl font-bold mb-4">$2,500.00</p>
-          <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-            <div 
-              className="bg-accent h-full rounded-full transition-all duration-1000" 
-              style={{ width: `${Math.min((stats.revenueThisMonth / 2500) * 100, 100)}%` }}
-            />
-          </div>
-          <p className="text-xs text-gray-400 mt-2">
-            {Math.round((stats.revenueThisMonth / 2500) * 100)}% of monthly goal reached
-          </p>
         </div>
       </div>
     </div>

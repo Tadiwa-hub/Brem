@@ -1,9 +1,8 @@
 import { Env } from './availability';
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const HARDCODED_PASSWORD = "Brem2026";
   const authHeader = context.request.headers.get('Authorization');
-  if (authHeader !== HARDCODED_PASSWORD) {
+  if (authHeader !== context.env.ADMIN_PASSWORD) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
@@ -33,19 +32,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const id = crypto.randomUUID();
 
-    await context.env.DB.prepare(
-      "INSERT INTO brem_bookings (id, client_name, client_phone, stay_type, preferred_date, num_guests, special_requests, status) " +
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    ).bind(
-      id,
-      data.client_name,
-      data.client_phone,
-      data.stay_type,
-      data.preferred_date,
-      data.num_guests,
-      data.special_requests || null,
-      'pending'
-    ).run();
+    // Use a transaction-like sequence (D1 batches) to ensure both booking and availability are updated
+    await context.env.DB.batch([
+      context.env.DB.prepare(
+        "INSERT INTO brem_bookings (id, client_name, client_phone, stay_type, preferred_date, num_guests, special_requests, status) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+      ).bind(
+        id,
+        data.client_name,
+        data.client_phone,
+        data.stay_type,
+        data.preferred_date,
+        data.num_guests,
+        data.special_requests || null,
+        'pending'
+      ),
+      context.env.DB.prepare(
+        "INSERT INTO brem_availability (date, status, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) " +
+        "ON CONFLICT(date) DO UPDATE SET status = excluded.status, updated_at = CURRENT_TIMESTAMP"
+      ).bind(data.preferred_date, 'fully_booked')
+    ]);
 
     return new Response(JSON.stringify({ success: true, id }), {
       headers: { 'Content-Type': 'application/json' }

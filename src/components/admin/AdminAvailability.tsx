@@ -8,7 +8,8 @@ import {
   startOfWeek, 
   endOfWeek, 
   eachDayOfInterval,
-  isSameMonth
+  isSameMonth,
+  parseISO
 } from 'date-fns';
 import { ChevronLeft, ChevronRight, Check, X, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -17,6 +18,12 @@ const AdminAvailability = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availability, setAvailability] = useState<Record<string, any>>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [bulkData, setBulkData] = useState({
+    from: '',
+    to: '',
+    status: 'fully_booked'
+  });
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -54,6 +61,43 @@ const AdminAvailability = () => {
       }
     } catch (error) {
       console.error('Failed to update:', error);
+    }
+  };
+
+  const handleBulkUpdate = async () => {
+    if (!bulkData.from || !bulkData.to) {
+      alert("Please select both From and To dates");
+      return;
+    }
+
+    setIsBulkLoading(true);
+    try {
+      const start = parseISO(bulkData.from);
+      const end = parseISO(bulkData.to);
+      const days = eachDayOfInterval({ start, end });
+
+      // Update each date sequentially (or use a bulk API if available, but here we reuse updateStatus logic)
+      // For performance in Cloudflare, we'll just loop for now as D1 is fast
+      for (const day of days) {
+        const dateStr = format(day, 'yyyy-MM-dd');
+        await fetch('/api/availability', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': token || ''
+          },
+          body: JSON.stringify({ date: dateStr, status: bulkData.status })
+        });
+      }
+      
+      fetchAvailability();
+      alert("Bulk update successful!");
+      setBulkData({ from: '', to: '', status: 'fully_booked' });
+    } catch (error) {
+      console.error('Bulk update failed:', error);
+      alert("Bulk update failed. Check console for details.");
+    } finally {
+      setIsBulkLoading(false);
     }
   };
 
@@ -148,21 +192,42 @@ const AdminAvailability = () => {
         <div className="flex flex-wrap gap-4 items-end">
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">From</label>
-            <input type="date" className="p-2 border border-gray-300 rounded text-sm" />
+            <input 
+              type="date" 
+              className="p-2 border border-gray-300 rounded text-sm" 
+              value={bulkData.from}
+              onChange={(e) => setBulkData({...bulkData, from: e.target.value})}
+            />
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">To</label>
-            <input type="date" className="p-2 border border-gray-300 rounded text-sm" />
+            <input 
+              type="date" 
+              className="p-2 border border-gray-300 rounded text-sm" 
+              value={bulkData.to}
+              onChange={(e) => setBulkData({...bulkData, to: e.target.value})}
+            />
           </div>
           <div>
             <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Mark As</label>
-            <select className="p-2 border border-gray-300 rounded text-sm">
-              <option>Fully Booked</option>
-              <option>On Request</option>
-              <option>Available</option>
+            <select 
+              className="p-2 border border-gray-300 rounded text-sm"
+              value={bulkData.status}
+              onChange={(e) => setBulkData({...bulkData, status: e.target.value})}
+            >
+              <option value="fully_booked">Fully Booked</option>
+              <option value="on_request">On Request</option>
+              <option value="available">Available</option>
             </select>
           </div>
-          <button className="bg-primary text-white px-6 py-2 rounded text-sm font-bold hover:bg-opacity-90">
+          <button 
+            onClick={handleBulkUpdate}
+            disabled={isBulkLoading}
+            className="bg-primary text-white px-6 py-2 rounded text-sm font-bold hover:bg-opacity-90 disabled:opacity-50 flex items-center"
+          >
+            {isBulkLoading ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+            ) : null}
             Block These Dates
           </button>
         </div>

@@ -115,24 +115,33 @@ const AvailabilityCalendar = () => {
               key={i}
               onClick={() => isCurrentMonth && !isBooked && onDateClick(day)}
               className={`
-                relative h-24 md:h-32 border-r border-b border-gray-100 flex flex-col p-2 transition-all duration-300
+                relative h-16 md:h-32 border-r border-b border-gray-100 flex flex-col p-1 md:p-2 transition-all duration-300
                 ${!isCurrentMonth ? 'bg-gray-50 text-gray-300' : 'bg-white cursor-pointer'}
                 ${isBooked && isCurrentMonth ? 'bg-red-50/30 cursor-not-allowed' : ''}
                 ${isOnRequest && isCurrentMonth ? 'bg-amber-50/50' : ''}
                 ${!isBooked && isCurrentMonth ? 'hover:bg-accent/5 hover:scale-[1.02] hover:z-10 hover:shadow-sm' : ''}
               `}
             >
-              <span className={`text-xs md:text-sm font-semibold ${isSameDay(day, today) ? 'bg-accent text-white w-6 h-6 flex items-center justify-center rounded-full shadow-md' : ''}`}>
+              {/* Visual Slash for Booked Dates */}
+              {isBooked && isCurrentMonth && (
+                <div className="absolute inset-0 pointer-events-none opacity-20">
+                  <svg className="w-full h-full" preserveAspectRatio="none">
+                    <line x1="0" y1="100%" x2="100%" y2="0" stroke="currentColor" strokeWidth="1" className="text-red-600" />
+                  </svg>
+                </div>
+              )}
+
+              <span className={`text-[10px] md:text-sm font-semibold ${isSameDay(day, today) ? 'bg-accent text-white w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full shadow-md' : ''}`}>
                 {format(day, 'd')}
               </span>
               
-              <div className="mt-auto flex flex-col items-center pb-2">
+              <div className="mt-auto flex flex-col items-center pb-1 md:pb-2">
                 {isCurrentMonth && (
                   <div className={`
-                    text-[9px] md:text-xs font-bold uppercase tracking-tighter md:tracking-normal px-1.5 py-0.5 rounded
-                    ${isBooked ? 'text-red-500 bg-red-100/50' : isOnRequest ? 'text-amber-600 bg-amber-100/50' : 'text-green-600 bg-green-100/50'}
+                    text-[7px] md:text-xs font-bold uppercase tracking-tighter md:tracking-normal px-1 md:px-1.5 py-0.5 rounded
+                    ${isBooked ? 'text-red-500 bg-red-100/30' : isOnRequest ? 'text-amber-600 bg-amber-100/50' : 'text-green-600 bg-green-100/50'}
                   `}>
-                    {isBooked ? 'Booked' : isOnRequest ? 'Request' : 'Available'}
+                    {isBooked ? 'Booked' : isOnRequest ? 'Req.' : 'Avail.'}
                   </div>
                 )}
               </div>
